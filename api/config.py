@@ -1,5 +1,6 @@
 import sys
 from typing import Any, Dict, Optional
+
 from dotenv import find_dotenv
 from pydantic import BaseSettings, PostgresDsn, validator
 
