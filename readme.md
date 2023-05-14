@@ -20,3 +20,9 @@
 **↓**
 
 **Concatenate password and salt**:
+
+## bug
+
+### multiple set-cookie header
+
+<https://stackoverflow.com/a/18967872>
