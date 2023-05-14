@@ -11,6 +11,9 @@ migrate:
 	poetry run alembic -c api/alembic.ini upgrade head
 
 revision:
+ifndef MESSAGE
+	$(error MESSAGE is not set)
+endif
 	poetry run alembic -c api/alembic.ini revision --autogenerate -m "${MESSAGE}"
 
 lint:

@@ -1,14 +1,16 @@
-from pydantic import BaseModel, Field
-from typing import Optional
 from datetime import date, datetime
+from typing import Optional
+
+from pydantic import BaseModel, Field
 
 
 # Shared properties
 class UserBase(BaseModel):
+    id: Optional[str] = Field(None)
     username: Optional[str] = Field(None)
     password: Optional[str] = Field(None)
     birthday: Optional[date] = Field(None)
-    # last_login: Optional[datetime] = Field(None)
+    last_login: Optional[datetime] = Field(None)
 
 
 """
@@ -34,7 +36,7 @@ Database schemas for User
 
 # Shared properties
 class UserDB(UserBase):
-    id: int
+    id: str
 
     class Config:
         orm_mode = True

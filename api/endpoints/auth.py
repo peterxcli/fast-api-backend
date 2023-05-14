@@ -1,6 +1,7 @@
 import schemas
 from deps import get_db
 from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from repositories import user_repo
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -39,35 +40,33 @@ async def user_auth(
         )
 
     claims = {"id": user.id}
-    ######################################TODO: store in cookie to prevent CSRF and XSS #######################################################
-    ######################################TODO: store access_token and refresh_token in the cookie #######################################################
-    # access_token = create_access_token(claims)
-    # refresh_token = create_refresh_token(claims)
+    access_token = create_access_token(claims)
+    refresh_token = create_refresh_token(claims)
 
-    # # Create a response object
-    # response = Response()
+    # Create a response object
+    response = JSONResponse(
+        content={"access_token": access_token, "refresh_token": refresh_token}
+    )
 
-    # # Set the JWT as a cookie
-    # response.set_cookie(
-    #     key="access_token",
-    #     value=f"Bearer {access_token}",
-    #     httponly=True,  # HttpOnly prevents the cookie from being accessed by client-side scripts, reducing risk of XSS attacks
-    #     secure=True,  # Secure ensures the cookie is only sent over https
-    #     samesite="strict",  # Strict SameSite cookies are only sent with same-site requests, reducing risk of CSRF attacks
-    # )
+    # Set the JWT as a cookie
+    response.set_cookie(
+        key="access_token",
+        value=f"Bearer {access_token}",
+        httponly=True,  # HttpOnly prevents the cookie from being accessed by client-side scripts, reducing risk of XSS attacks
+        secure=True,  # Secure ensures the cookie is only sent over https
+        samesite="strict",  # Strict SameSite cookies are only sent with same-site requests, reducing risk of CSRF attacks
+    )
 
-    # # Set the refresh token as a cookie
-    # response.set_cookie(
-    #     key="refresh_token",
-    #     value=refresh_token,
-    #     httponly=True,
-    #     secure=True,
-    #     samesite="strict",
-    # )
-
-    # return response
-    ###################################### store access_token and refresh_token in the cookie #######################################################
-    ################################### store in cookie to prevent CSRF and XSS ####################################################################
+    # Set the refresh token as a cookie
+    #FIXME: This is not working, because the set multiple set-cookie header is not allowed, need to find a way to set multiple cookies
+    response.set_cookie(
+        key="refresh_token",
+        value=f"Bearer {refresh_token}",
+        httponly=True,
+        secure=True,
+        samesite="strict",
+    )
+    return response
 
     return schemas.AuthToken(
         access_token=create_access_token(claims), token_type="bearer"
@@ -87,4 +86,3 @@ async def refresh_token(refresh_token: str, db: AsyncSession = Depends(get_db)):
     new_access_token = create_access_token(claims)
 
     return {"access_token": new_access_token, "token_type": "bearer"}
-
