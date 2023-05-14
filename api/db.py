@@ -12,6 +12,8 @@ ASYNC_ENGINE: Engine = create_async_engine(
     pool_recycle=3600,
 )
 
+print("ASYNC_ENGINE", settings.POSTGRES_DSN)
+
 ASYNC_SESSION: Session = sessionmaker(
     class_=AsyncSession, autocommit=False, autoflush=False, bind=ASYNC_ENGINE
 )

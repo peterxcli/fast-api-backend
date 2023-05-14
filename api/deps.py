@@ -34,7 +34,7 @@ async def get_current_user(
         [int] @payload.exp:   1620000000
         """
         payload = jwt.decode(
-            token, settings.SECRET_KEY, algorithms=[settings.ACCESS_TOKEN_ALGORITHM]
+            token, settings.ACCESS_TOKEN_SECRET_KEY, algorithms=[settings.ACCESS_TOKEN_ALGORITHM]
         )
         data = schemas.AuthTokenData(**payload)
     except (jwt.JWTError, ValidationError):

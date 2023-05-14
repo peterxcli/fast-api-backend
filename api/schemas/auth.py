@@ -11,6 +11,4 @@ class AuthToken(BaseModel):
 
 class AuthTokenData(BaseModel):
     id: int
-    name: str
-    email: str
     exp: int

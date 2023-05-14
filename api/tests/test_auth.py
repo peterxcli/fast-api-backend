@@ -19,7 +19,7 @@ def _test_user_auth_success_assert(resp: Response, expected_resp: ResponseBody):
     body = resp.json()
     payload: Dict[str, Any] = jwt.decode(
         body["access_token"],
-        settings.SECRET_KEY,
+        settings.ACCESS_TOKEN_SECRET_KEY,
         algorithms=[settings.ACCESS_TOKEN_ALGORITHM],
     )
 

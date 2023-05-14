@@ -55,8 +55,11 @@ class Settings(BaseSettings):
         )
 
     """ Core configuration """
-    SECRET_KEY: str = "m3ow87"
+    SALT: str = "fu3k3n"
+    ACCESS_TOKEN_SECRET_KEY: str = "m3ow87"
+    REFRESH_TOKEN_SECRET_KEY: str = "m3ow87m3ow87??"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8
+    REFRESH_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 30
     ACCESS_TOKEN_ALGORITHM: str = "HS256"
 
 

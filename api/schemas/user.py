@@ -1,11 +1,14 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+from typing import Optional
+from datetime import date, datetime
 
 
 # Shared properties
 class UserBase(BaseModel):
-    name: str
-    email: str
-    password: str
+    username: Optional[str] = Field(None)
+    password: Optional[str] = Field(None)
+    birthday: Optional[date] = Field(None)
+    # last_login: Optional[datetime] = Field(None)
 
 
 """
@@ -20,7 +23,7 @@ class UserCreate(UserBase):
 
 # Properties to receive on user update
 class UserUpdate(UserBase):
-    new_password: str
+    new_password: Optional[str] = Field(None)
     pass
 
 

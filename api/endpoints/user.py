@@ -30,7 +30,7 @@ CREATE_USER = {
 )
 async def create_user(payload: schemas.UserCreate, db: AsyncSession = Depends(get_db)):
     # Check if user already exists
-    if await user_repo.get_by_email(db, payload.email):
+    if await user_repo.get_by_username(db, payload.username):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="User already exists"
         )
