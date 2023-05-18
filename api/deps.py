@@ -9,9 +9,10 @@ from pydantic import ValidationError
 from repositories import user_repo
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
+from utils import OAuth2PasswordBearerWithCookie, OAuth2PasswordBearerWithCookieInsecure
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl=f"{settings.APP_PREFIX}/auth")
-
+oauth2_scheme = OAuth2PasswordBearerWithCookie(tokenUrl=f"{settings.APP_PREFIX}/auth")
+oauth2_scheme_insecure = OAuth2PasswordBearerWithCookieInsecure(tokenUrl=f"{settings.APP_PREFIX}/auth")
 
 async def get_db() -> AsyncSession:
     try:
@@ -53,3 +54,36 @@ async def get_current_user(
         )
 
     return user
+
+async def get_current_user_insecure(
+    db: AsyncSession = Depends(get_db),
+    token: str = Depends(oauth2_scheme_insecure),
+) -> schemas.UserWithoutPassword:
+    try:
+        """payload @type: dict
+        [int] @payload.id:    1
+        [str] @payload.name:  m3ow87
+        [str] @payload.email: arasi27676271@gmail.com
+        [int] @payload.exp:   1620000000
+        """
+        payload = jwt.decode(
+            token,
+            settings.ACCESS_TOKEN_SECRET_KEY,
+            algorithms=[settings.ACCESS_TOKEN_ALGORITHM],
+        )
+        data = schemas.AuthTokenData(**payload)
+    except (jwt.JWTError, ValidationError):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials",
+        )
+
+    # Check if user exists
+    user = await user_repo.get(db, data.id)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
+        )
+
+    return user
+

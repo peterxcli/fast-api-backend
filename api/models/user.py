@@ -7,6 +7,6 @@ from .base import Base
 class User(Base):
     username = Column(String, index=True, unique=True)
     password = Column(String, nullable=False)
-    birthday = Column(Date)
+    birthday = Column(Date, nullable=False, default=func.now())
     create_time = Column(DateTime, default=func.now())
     last_login = Column(DateTime)

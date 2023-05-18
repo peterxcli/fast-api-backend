@@ -16,7 +16,6 @@
 
 **Salt**: Random data that is used as an additional input to the hash function to protect the password.
 
-
 **↓**
 
 **Concatenate password and salt**:
@@ -26,3 +25,22 @@
 ### multiple set-cookie header
 
 <https://stackoverflow.com/a/18967872>
+
+### rewrite Oauth2PasswordBearer with a custom method
+
+<https://www.fastapitutorial.com/blog/fastapi-jwt-httponly-cookie/>
+
+### Double Submit Cookie to prevent CSRF
+
+<https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#double-submit-cookie>
+
+## TO-DO
+
+- [ ] refresh token - backend
+- [ ] logout - backend
+- [ ] logout - frontend
+- [ ] update password - backend
+- [ ] update password - frontend
+- [ ] auto use  refresh token when access token expired - frontend
+- [ ] create user - frontend
+- [ ] unit test

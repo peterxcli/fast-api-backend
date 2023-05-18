@@ -1,0 +1,130 @@
+.top {
+    width: 100%;
+    height: 50px;
+    background-color: #326de6;
+    position: sticky;
+    top: 0;
+    display: flex;
+    align-items: center;
+    z-index: 999;
+}
+
+.nested {
+    padding-left: 40px;
+}
+
+.topRight {
+    flex: 3;
+    display: flex;
+    align-items: center;
+    justify-content:center;
+    width: 100px;
+}
+
+.topRight .username {
+    width: 25%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-size: 24px;
+    color: #ffffff;
+}
+
+.topCenter {
+    flex: content;
+}
+
+.topList {
+    display: flex;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    top: 5px;
+}
+
+.TopBarToggle {
+    border: 0;
+    height: 40px;
+    width: 40px;
+    padding: 0.5rem;
+    /* border-radius: 50%; */
+    margin: 10px;
+    cursor: pointer;
+    display: none;
+    background-color: transparent;
+}
+
+.octicon-three-bars{
+    filter: invert(99%) sepia(100%) saturate(2%) hue-rotate(248deg) brightness(106%) contrast(100%);
+}
+
+.TopBarToggle:hover {
+    background-color: #000000;
+    border-radius: 50%;
+}
+
+.topListItem {
+    margin-right: 20px;
+    font-size: 18px;
+    font-weight: 300;
+    cursor: pointer;
+    color: #ffffff;
+}
+
+.topListItem:hover {
+    color: gray;
+}
+
+.topListItem-small {
+    display: none;
+}
+
+@media screen and (max-width: 768px) {
+    .topList {
+        display: none;
+        flex-direction: column;
+        background-color: rgb(159, 159, 159);
+        position: absolute;
+        border-radius: 3px;
+    }
+
+    .topList.expanded {
+        display: flex;
+    }
+
+    .TopBarToggle {
+        display: flex;
+    }
+
+    .topListItem {
+        margin: 5px;
+        background-color: rgb(187, 187, 187);
+        font-weight: 500;
+        border-radius: 3px;
+    }
+}
+
+@media screen and (max-width: 320px) {
+    .topListItem-small {
+        display: flex;
+    }
+    .topRight {
+        display: none;
+    }
+}
+
+.topImg {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 15px;
+    cursor: pointer;
+}
+
+.topSearchIcon {
+    font-size: 18px;
+    color: #666;
+    cursor: pointer;
+}

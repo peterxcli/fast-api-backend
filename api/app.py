@@ -3,6 +3,7 @@ from endpoints import auth, health, user
 from fastapi import APIRouter, Depends, FastAPI
 from fastapi.requests import Request
 from fastapi.responses import Response
+from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 
 APP = FastAPI(
@@ -31,6 +32,14 @@ async def log_request(request: Request):
     )
     logger.info(f"header: {request.headers}")
 
+# Enable CORS middleware
+APP.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Log response status code and body
 @APP.middleware("http")
@@ -45,7 +54,7 @@ async def log_response(request: Request, call_next):
     return Response(
         content=body,
         status_code=response.status_code,
-        headers=dict(response.headers),
+        headers=response.headers,
         media_type=response.media_type,
     )
 

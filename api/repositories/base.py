@@ -26,7 +26,7 @@ class BaseRepository(Generic[Model, CreateModel, UpdateModel]):
         await db.refresh(db_obj)
         return db_obj
 
-    async def get(self, db: AsyncSession, id: int) -> Optional[Model]:
+    async def get(self, db: AsyncSession, id: str) -> Optional[Model]:
         result = await db.execute(
             select(self.model).where(
                 and_(self.model.id == id, self.model.deleted == false())

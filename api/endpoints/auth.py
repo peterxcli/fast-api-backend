@@ -1,11 +1,15 @@
+from typing import List, Union
+from deps import get_current_user, get_current_user_insecure
 import schemas
+from typing_extensions import Annotated
 from deps import get_db
-from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi import APIRouter, Depends, HTTPException, Header, Response, status
 from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from repositories import user_repo
 from sqlalchemy.ext.asyncio import AsyncSession
 from utils import create_access_token, create_refresh_token
+import secrets
 
 router = APIRouter()
 
@@ -20,15 +24,31 @@ USER_AUTH = {
     },
 }
 
+@router.get("/user", response_model=schemas.UserWithToken)
+async def get_user(
+    response: Response,
+    user: schemas.UserWithoutPassword = Depends(get_current_user_insecure),
+):
+    csrf_token = secrets.token_urlsafe(32)
+    response.set_cookie(
+        key="csrf_token",
+        value=f"{csrf_token}",
+        httponly=True,
+        secure=True,
+    )
+    user.csrf_token = csrf_token
+    return user
+
 
 @router.post(
-    "/",
+    "/token",
     status_code=status.HTTP_200_OK,
     responses=USER_AUTH,
-    response_model=schemas.AuthToken,
+    # response_model=schemas.AuthToken,
     name="auth:user_auth",
 )
 async def user_auth(
+    response: Response,
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: AsyncSession = Depends(get_db),
 ):
@@ -42,23 +62,15 @@ async def user_auth(
     claims = {"id": user.id}
     access_token = create_access_token(claims)
     refresh_token = create_refresh_token(claims)
-
-    # Create a response object
-    response = JSONResponse(
-        content={"access_token": access_token, "refresh_token": refresh_token}
-    )
+    csrf_token = secrets.token_urlsafe(32)
 
     # Set the JWT as a cookie
     response.set_cookie(
         key="access_token",
         value=f"Bearer {access_token}",
-        httponly=True,  # HttpOnly prevents the cookie from being accessed by client-side scripts, reducing risk of XSS attacks
-        secure=True,  # Secure ensures the cookie is only sent over https
-        samesite="strict",  # Strict SameSite cookies are only sent with same-site requests, reducing risk of CSRF attacks
+        httponly=True,
+        secure=True,
     )
-
-    # Set the refresh token as a cookie
-    #FIXME: This is not working, because the set multiple set-cookie header is not allowed, need to find a way to set multiple cookies
     response.set_cookie(
         key="refresh_token",
         value=f"Bearer {refresh_token}",
@@ -66,11 +78,10 @@ async def user_auth(
         secure=True,
         samesite="strict",
     )
-    return response
-
-    return schemas.AuthToken(
-        access_token=create_access_token(claims), token_type="bearer"
-    )  # nosec
+    return {
+            "access_token": access_token,
+            "refresh_token": refresh_token,
+        }
 
 
 @router.post("/token/refresh")

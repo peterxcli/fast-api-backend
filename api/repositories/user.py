@@ -85,18 +85,13 @@ class UserRepository(BaseRepository[User, UserCreate, UserUpdate]):
         await db.refresh(db_obj)
         return db_obj
 
+    # TODO: let this user update function can handle multiple fields update, and not allow password update here
     async def update(self, db: AsyncSession, user: UserUpdate, db_obj: User) -> User:
-        # TODO: let this user update function can handle multiple fields update, there is only password update in this function
-        # Check password
-        user.password = self._get_hash_password(user.password)
-        if not user.password == db_obj.password:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, detail="Wrong password"
-            )
+        delattr(user, "password") # remove password from user update
 
         # Update data
-        user.password = self._get_hash_password(user.new_password)
-        for field in user.dict():
+        for field in user.dict(exclude_unset=True):
+            print(field, getattr(user, field))
             setattr(db_obj, field, getattr(user, field))
         db.add(db_obj)
         await db.commit()

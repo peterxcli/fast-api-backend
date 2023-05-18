@@ -20,12 +20,14 @@ CRUD schemas for User
 
 # Properties to receive on user creation
 class UserCreate(UserBase):
-    pass
+    class Config:
+        fields = {"last_login": {"exclude": True}}
 
 
 # Properties to receive on user update
-class UserUpdate(UserBase):
-    new_password: Optional[str] = Field(None)
+class UserUpdate(BaseModel):
+    password: Optional[str] = Field(None)
+    birthday: Optional[date] = Field(None)
     pass
 
 
@@ -50,3 +52,8 @@ class User(UserDB):
 class UserWithoutPassword(UserDB):
     class Config:
         fields = {"password": {"exclude": True}}
+
+class UserWithToken(UserWithoutPassword):
+    csrf_token: Optional[str] = Field(None)
+    class Config:
+        pass

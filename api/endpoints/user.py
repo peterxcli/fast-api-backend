@@ -93,13 +93,6 @@ async def update_user(
     db: AsyncSession = Depends(get_db),
     current_user: schemas.User = Depends(get_current_user),
 ):
-    # check if email already exists
-    mail_check: Optional[User] = await user_repo.get_by_email(db, payload.email)
-    if mail_check is not None and mail_check.id != current_user.id:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Email already exists"
-        )
-
     # update user
     user = await user_repo.update(db, payload, current_user)
     return user
@@ -124,7 +117,7 @@ DELETE_USER = {
     response_model=schemas.Msg,
     name="user:delete_user",
 )
-async def delete_user(user_id: int, db: AsyncSession = Depends(get_db)):
+async def delete_user(user_id: str, db: AsyncSession = Depends(get_db)):
     # check if user exists
     user: Optional[User] = await user_repo.get(db, user_id)
     if user is None:
