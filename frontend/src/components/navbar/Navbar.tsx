@@ -174,7 +174,7 @@ export default function Navbar({ user, handleLogout, drawerWidth, lists }: Navba
                 )}
                 {!user?.isAuthenticated && (
                     <ListItem button>
-                        <Button href="/signup" variant="contained" color="inherit">
+                        <Button href="/" variant="contained" color="inherit">
                             Sign Up
                         </Button>
                     </ListItem>

@@ -16,25 +16,45 @@ type AppPropsWithLayout = AppProps & {
 };
 
 export default function App({ Component, pageProps }: AppPropsWithLayout) {
-  const { user, logout, token, isAuthenticated, setUser, setAuthenticated, setToken } = useAppStore()
+  const { user, token, logout, isAuthenticated, setUser, setAuthenticated, setToken } = useAppStore()
   useEffect(() => {
     const fetchUser = async () => {
-      const response = await secureFetchApi<User & {csrf_token: string}>(`${config.baseUrl}/api/auth/user`, {
-          method: 'GET',
-          headers: {
-              'Content-Type': 'application/json',
-          },
+      const response = await secureFetchApi<User & { csrf_token: string }>(`${config.baseUrl}/api/auth/user`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
       })
       if (response.success) {
+        const data = response.data;
+        setUser(data!)
+        setAuthenticated(true)
+        setToken({ ...token, csrf_token: response.data!.csrf_token })
+      }
+      else {
+        // use refresh token to get new csrf token
+        const response = await secureFetchApi<User & { csrf_token: string }>(`${config.baseUrl}/api/auth/token/refresh`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({}),
+        }, token?.refresh_token)
+        if (response.success) {
           const data = response.data;
           setUser(data!)
           setAuthenticated(true)
-          setToken({...token, csrf_token: response.data!.csrf_token})
+          setToken({ ...token, csrf_token: response.data!.csrf_token })
+        }
+        else {
+          logout();
+        }
       }
-  };
-  fetchUser();
+
+    };
+    fetchUser();
   }, [setAuthenticated, setUser, setToken]);
 
-  const getLayout = Component.getLayout ?? ((page) => page);
+  const getLayout = Component.getLayout ?? ((page: any) => page);
   return getLayout(<Component {...pageProps} />);
 }

@@ -17,7 +17,7 @@ class UserRepository(BaseRepository[User, UserCreate, UserUpdate]):
         salt_pass = "".join([password, settings.SALT])
         return hashlib.sha256(salt_pass.encode()).hexdigest()
 
-    async def validate_refresh_token(refresh_token: str):
+    async def validate_refresh_token(self, refresh_token: str):
         try:
             # Decode the token
             payload = jwt.decode(
@@ -55,39 +55,10 @@ class UserRepository(BaseRepository[User, UserCreate, UserUpdate]):
         )
         return result.scalars().first()
 
-    async def update_multiple_field(
-        self, db: AsyncSession, user: UserUpdate, db_obj: User
-    ) -> User:
-        # Hash the new password if it's provided
-        if user.new_password:
-            user.new_password = self._get_hash_password(user.new_password)
-
-        # Update the fields in db_obj with those from the user object
-        for field in user.dict(exclude_unset=True):
-            if field == "password":
-                # Check if the old password matches
-                if (
-                    user.password
-                    and self._get_hash_password(user.password) != db_obj.password
-                ):
-                    raise HTTPException(
-                        status_code=status.HTTP_400_BAD_REQUEST, detail="Wrong password"
-                    )
-                elif user.new_password:
-                    # If a new password has been provided, update the password
-                    setattr(db_obj, field, user.new_password)
-            else:
-                # For any field other than 'password', just update the value
-                setattr(db_obj, field, getattr(user, field))
-
-        db.add(db_obj)
-        await db.commit()
-        await db.refresh(db_obj)
-        return db_obj
-
-    # TODO: let this user update function can handle multiple fields update, and not allow password update here
     async def update(self, db: AsyncSession, user: UserUpdate, db_obj: User) -> User:
-        delattr(user, "password") # remove password from user update
+        # delattr(user, "password") # remove password from user update
+        if user.password:
+            user.password = self._get_hash_password(user.password)
 
         # Update data
         for field in user.dict(exclude_unset=True):

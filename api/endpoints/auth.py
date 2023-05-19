@@ -3,7 +3,7 @@ from deps import get_current_user, get_current_user_insecure
 import schemas
 from typing_extensions import Annotated
 from deps import get_db
-from fastapi import APIRouter, Depends, HTTPException, Header, Response, status
+from fastapi import APIRouter, Depends, HTTPException, Header, Response, status, Request
 from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from repositories import user_repo
@@ -85,8 +85,10 @@ async def user_auth(
 
 
 @router.post("/token/refresh")
-async def refresh_token(refresh_token: str, db: AsyncSession = Depends(get_db)):
-    user_id = await user_repo.validate_refresh_token(db, refresh_token)
+async def refresh_token(request: Request, response: Response, db: AsyncSession = Depends(get_db)):
+    refresh_token = request.cookies["refresh_token"].split(" ")[1]
+    print(refresh_token)
+    user_id = await user_repo.validate_refresh_token(refresh_token)
     if user_id is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -95,5 +97,29 @@ async def refresh_token(refresh_token: str, db: AsyncSession = Depends(get_db)):
 
     claims = {"id": user_id}
     new_access_token = create_access_token(claims)
+    new_refresh_token = create_refresh_token(claims)
+    response.set_cookie(
+        key="access_token",
+        value=f"Bearer {new_access_token}",
+        httponly=True,
+        secure=True,
+    )
+    response.set_cookie(
+        key="refresh_token",
+        value=f"Bearer {new_refresh_token}",
+        httponly=True,
+        secure=True,
+        samesite="strict",
+    )
 
-    return {"access_token": new_access_token, "token_type": "bearer"}
+    return {
+            "access_token": new_access_token,
+            "refresh_token": new_refresh_token,
+        }
+
+@router.post("/logout")
+async def refresh_token(response: Response, db: AsyncSession = Depends(get_db)):
+    response.delete_cookie("access_token")
+    response.delete_cookie("refresh_token")
+    response.delete_cookie("csrf_token")
+    return {"message": "Logout successful"}

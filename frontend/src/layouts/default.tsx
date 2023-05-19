@@ -3,6 +3,8 @@ import { ReactNode } from "react"
 import { useAppStore } from '@/store/store';
 import { Groups, Home, Work, Upload, SyncAlt, Preview, AttachMoney, Business, BarChart, Dashboard } from '@mui/icons-material';
 import { useRouter } from "next/router";
+import { secureFetchApi } from '@/apis/utils';
+import config from '@/config';
 
 export default function Layout({ children }: { children: ReactNode }) {
   const { user, logout, token, isAuthenticated } = useAppStore()
@@ -10,6 +12,7 @@ export default function Layout({ children }: { children: ReactNode }) {
 
   const handleLogout = async () => {
     logout();
+    router.push('/');
   }
   return (
     <>

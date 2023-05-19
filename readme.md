@@ -36,11 +36,4 @@
 
 ## TO-DO
 
-- [ ] refresh token - backend
-- [ ] logout - backend
-- [ ] logout - frontend
-- [ ] update password - backend
-- [ ] update password - frontend
-- [ ] auto use  refresh token when access token expired - frontend
-- [ ] create user - frontend
 - [ ] unit test

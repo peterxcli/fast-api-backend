@@ -1,3 +1,4 @@
+import { serverLogout } from "@/apis/auth";
 import { StateCreator } from "zustand";
 
 export interface UserSlice {
@@ -17,5 +18,8 @@ export const createUserSlice: StateCreator<UserSlice> = (set) => ({
     setUser: (user: User) => set({ user: user }),
     setToken: (token: Token) => set({ token: token }),
     setAuthenticated: (isAuthenticated: boolean) => set( { isAuthenticated: isAuthenticated  }),
-    logout: () => set({ user: undefined, token: undefined, isAuthenticated: false })
+    logout: async () => {
+        await serverLogout()
+        set({ user: undefined, token: undefined, isAuthenticated: false })
+    }
 })
