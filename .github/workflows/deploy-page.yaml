@@ -65,7 +65,7 @@ jobs:
       - name: Set Base Path
         run: |
             REPO_NAME=$(echo $GITHUB_REPOSITORY | awk -F '/' '{print $2}')
-            sed -i "s|basePath:.*|basePath: '/$REPO_NAME',|" ./frontend/next.config.js
+            sed -i "s|basePath:.*|basePath: '/$REPO_NAME',|" next.config.js
 
       - name: Restore cache
         uses: actions/cache@v3
