@@ -19,9 +19,10 @@ CRUD schemas for User
 
 
 # Properties to receive on user creation
-class UserCreate(UserBase):
-    class Config:
-        fields = {"last_login": {"exclude": True}}
+class UserCreate(BaseModel):
+    username: Optional[str] = Field(None)
+    password: Optional[str] = Field(None)
+    birthday: Optional[date] = Field(None)
 
 
 # Properties to receive on user update

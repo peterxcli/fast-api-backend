@@ -18,6 +18,7 @@ greenlet = "2.0.2"
 psycopg2-binary = "2.9.5"
 python-jose = {version = "3.3.0", extras = ["cryptography"]}
 python-multipart = "0.0.6"
+psutil = "^5.9.5"
 
 [tool.poetry.dev-dependencies]
 pre-commit = "2.20.0"

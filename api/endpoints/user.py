@@ -117,8 +117,12 @@ DELETE_USER = {
     response_model=schemas.Msg,
     name="user:delete_user",
 )
-async def delete_user(user_id: str, db: AsyncSession = Depends(get_db)):
+async def delete_user(user_id: str, db: AsyncSession = Depends(get_db), current_user: schemas.User = Depends(get_current_user)):
     # check if user exists
+    if current_user.id != user_id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Wrong user"
+        )
     user: Optional[User] = await user_repo.get(db, user_id)
     if user is None:
         raise HTTPException(
