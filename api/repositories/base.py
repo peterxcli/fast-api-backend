@@ -2,7 +2,7 @@ from typing import Generic, Optional, Type, TypeVar
 
 from models.base import Base
 from pydantic import BaseModel
-from sqlalchemy import and_, false, delete
+from sqlalchemy import and_, delete, false
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
@@ -49,11 +49,12 @@ class BaseRepository(Generic[Model, CreateModel, UpdateModel]):
         # db_obj.deleted = True
         # db.add(db_obj)
         # delete(db_obj).where(self.model.id == db_obj.id)
-        result = await db.execute(
-            delete(self.model).where(
-                and_(self.model.id == db_obj.id, self.model.deleted == false())
-            )
-        )
-        print(result)
+        db.delete(db_obj)
+        # result = await db.execute(
+        #     delete(self.model).where(
+        #         and_(self.model.id == db_obj.id, self.model.deleted == false())
+        #     )
+        # )
+        # print(result)
         await db.commit()
         await db.refresh(db_obj)

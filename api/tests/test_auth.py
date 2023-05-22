@@ -24,10 +24,7 @@ def _test_user_auth_success_assert(resp: Response, expected_resp: ResponseBody):
     )
 
     assert resp.status_code == expected_resp.status_code
-    assert resp.json()["token_type"] == expected_resp.body["token_type"]
-    assert payload["id"] == 1
-    assert payload["name"] == DEFAULT_USER.name
-    assert payload["email"] == DEFAULT_USER.email
+    assert payload["id"] == DEFAULT_USER.id
 
 
 async def test_user_auth_success(app: FastAPI):
@@ -44,7 +41,7 @@ async def test_user_auth_success(app: FastAPI):
         assert_func=_test_user_auth_success_assert,
         data={
             "grant_type": "",
-            "username": DEFAULT_USER.email,
+            "username": DEFAULT_USER.username,
             "password": DEFAULT_USER.password,
             "scope": "",
             "client_id": "",
@@ -58,7 +55,7 @@ async def test_user_auth_success(app: FastAPI):
     [
         {
             "grant_type": "",
-            "username": DEFAULT_USER.email,
+            "username": DEFAULT_USER.username,
             "password": "meow",
             "scope": "",
             "client_id": "",

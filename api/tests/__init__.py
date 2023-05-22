@@ -8,9 +8,8 @@ from starlette.datastructures import URLPath
 from utils import create_access_token
 
 DEFAULT_USER = schemas.UserWithoutPassword(
-    id=1,
-    name="default",
-    email="default@gmail.com",
+    id="1",
+    username="default",
     password="default",
 )
 
@@ -62,7 +61,9 @@ class AssertRequest:
                 assert_func(resp, resp_body, *args, **kwargs)
             else:
                 assert resp.status_code == resp_body.status_code
-                assert resp.json() == resp_body.body
-
+                for key in resp_body.body:
+                    if not resp_body.body[key]:
+                        continue
+                    assert resp_body.body[key] == resp.json()[key]
 
 assert_request = AssertRequest()

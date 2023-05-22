@@ -59,7 +59,12 @@ class UserRepository(BaseRepository[User, UserCreate, UserUpdate]):
         # delattr(user, "password") # remove password from user update
         if user.password:
             user.password = self._get_hash_password(user.password)
-
+        if user.username and user.username != db_obj.username:
+            if await self.get_by_username(db, user.username):
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Username already exists",
+                )
         # Update data
         for field in user.dict(exclude_unset=True):
             print(field, getattr(user, field))

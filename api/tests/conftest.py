@@ -43,8 +43,8 @@ async def init_table(request):
     # insert default data for user
     async with session() as conn:
         user = schemas.UserCreate(
-            name=DEFAULT_USER.name,
-            email=DEFAULT_USER.email,
+            username=DEFAULT_USER.username,
             password=DEFAULT_USER.password,
         )
-        await user_repo.create(conn, user)
+        res = await user_repo.create(conn, user)
+        DEFAULT_USER.id = res.id

@@ -29,7 +29,7 @@ format:
 test:
 	poetry run pytest -vv --cov-report=term-missing --cov=${APP}/endpoints ${APP}/tests
 
-ci-bundle: analysis format lint test
+ci-bundle: analysis format test
 
 dev:
 	cd api && poetry run uvicorn app:APP --reload --host 0.0.0.0

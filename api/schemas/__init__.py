@@ -1,3 +1,4 @@
 from .auth import AuthToken, AuthTokenData
 from .msg import Msg
-from .user import User, UserCreate, UserUpdate, UserWithoutPassword, UserWithToken
+from .user import (User, UserCreate, UserUpdate, UserWithoutPassword,
+                   UserWithToken)

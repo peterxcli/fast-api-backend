@@ -27,6 +27,7 @@ class UserCreate(BaseModel):
 
 # Properties to receive on user update
 class UserUpdate(BaseModel):
+    username: Optional[str] = Field(None)
     password: Optional[str] = Field(None)
     birthday: Optional[date] = Field(None)
     pass
@@ -54,7 +55,9 @@ class UserWithoutPassword(UserDB):
     class Config:
         fields = {"password": {"exclude": True}}
 
+
 class UserWithToken(UserWithoutPassword):
     csrf_token: Optional[str] = Field(None)
+
     class Config:
         pass

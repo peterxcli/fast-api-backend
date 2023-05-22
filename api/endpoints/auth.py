@@ -1,15 +1,16 @@
+import secrets
 from typing import List, Union
-from deps import get_current_user, get_current_user_insecure
+
 import schemas
-from typing_extensions import Annotated
-from deps import get_db
-from fastapi import APIRouter, Depends, HTTPException, Header, Response, status, Request
+from deps import get_current_user, get_current_user_insecure, get_db
+from fastapi import (APIRouter, Depends, Header, HTTPException, Request,
+                     Response, status)
 from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from repositories import user_repo
 from sqlalchemy.ext.asyncio import AsyncSession
+from typing_extensions import Annotated
 from utils import create_access_token, create_refresh_token
-import secrets
 
 router = APIRouter()
 
@@ -24,7 +25,12 @@ USER_AUTH = {
     },
 }
 
-@router.get("/user", response_model=schemas.UserWithToken)
+
+@router.get(
+    "/user",
+    response_model=schemas.UserWithToken,
+    name="auth:user_info"
+)
 async def get_user(
     response: Response,
     user: schemas.UserWithoutPassword = Depends(get_current_user_insecure),
@@ -79,13 +85,15 @@ async def user_auth(
         samesite="strict",
     )
     return {
-            "access_token": access_token,
-            "refresh_token": refresh_token,
-        }
+        "access_token": access_token,
+        "refresh_token": refresh_token,
+    }
 
 
 @router.post("/token/refresh")
-async def refresh_token(request: Request, response: Response, db: AsyncSession = Depends(get_db)):
+async def refresh_token(
+    request: Request, response: Response, db: AsyncSession = Depends(get_db)
+):
     refresh_token = request.cookies["refresh_token"].split(" ")[1]
     print(refresh_token)
     user_id = await user_repo.validate_refresh_token(refresh_token)
@@ -113,9 +121,10 @@ async def refresh_token(request: Request, response: Response, db: AsyncSession =
     )
 
     return {
-            "access_token": new_access_token,
-            "refresh_token": new_refresh_token,
-        }
+        "access_token": new_access_token,
+        "refresh_token": new_refresh_token,
+    }
+
 
 @router.post("/logout")
 async def refresh_token(response: Response, db: AsyncSession = Depends(get_db)):

@@ -1,9 +1,9 @@
 from config import settings
 from endpoints import auth, health, user
 from fastapi import APIRouter, Depends, FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.requests import Request
 from fastapi.responses import Response
-from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 
 APP = FastAPI(
@@ -31,6 +31,7 @@ async def log_request(request: Request):
         f"[{request.client.host}:{request.client.host}] {request.method} {request.url}"
     )
     logger.info(f"header: {request.headers}")
+
 
 # Enable CORS middleware
 APP.add_middleware(

@@ -18,7 +18,7 @@ jobs:
           POSTGRES_DB: fastapi-template
           POSTGRES_PASSWORD: m3ow87
           POSTGRES_HOST_AUTH_METHOD: trust
-  
+
     steps:
       - name: Install container dependencies
         run: |
@@ -28,7 +28,6 @@ jobs:
           apt install -y git make
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - uses: actions/checkout@v3
-
       - name: Set up Python 3.8
         uses: actions/setup-python@v4
         with:
@@ -45,20 +44,20 @@ jobs:
       - name: Run ci bundle command
         run: |
           make ci-bundle
-      
+
       - name: Coverage Badge
         if: success() && github.ref == 'refs/heads/master'
         run: |
           coverage-badge -f -o coverage.svg
         shell: sh
-      
+
       - name: Verify Changed files
         uses: tj-actions/verify-changed-files@v13
         if: success() && github.ref == 'refs/heads/master'
         id: verify-changed-files
         with:
           files: coverage.svg
-      
+
       - name: Commit files
         if: steps.verify-changed-files.outputs.files_changed == 'true'
         run: |

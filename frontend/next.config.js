@@ -6,7 +6,7 @@ const nextConfig = {
     unoptimized: true,
   },
   // distDir: 'dist',
-  basePath: '/'
+  basePath: ''
 }
 
 export default nextConfig
