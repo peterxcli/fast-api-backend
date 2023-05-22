@@ -43,6 +43,7 @@ jobs:
 
       - name: Run ci bundle command
         run: |
+          make migrate
           make ci-bundle
 
       - name: Coverage Badge
