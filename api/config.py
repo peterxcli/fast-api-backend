@@ -21,7 +21,7 @@ class Settings(BaseSettings):
     POSTGRES_DB: str = "fastapi-template"
     POSTGRES_HOST: str = "postgres"
     POSTGRES_PORT: str = "5432"
-    POSTGRES_USER: str = "m3ow87"
+    POSTGRES_USER: str = "postgres"
     POSTGRES_PASSWORD: str = "m3ow87"
     POSTGRES_TEST_PORT: str = "5433"
     POSTGRES_DSN: Optional[PostgresDsn] = None
